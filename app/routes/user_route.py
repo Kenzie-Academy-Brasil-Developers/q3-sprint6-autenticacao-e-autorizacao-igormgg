@@ -1,6 +1,7 @@
 from flask import Blueprint
 
-from app.controllers.user_controller import delete_user, get_user, login_user, register_user, update_user
+from app.controllers.user_controller import (delete_user, get_user, login_user,
+                                             register_user, update_user)
 
 bp_user = Blueprint("bp_user", __name__, url_prefix="/api")
 

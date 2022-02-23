@@ -1,15 +1,14 @@
-from secrets import token_urlsafe
-
 from flask import jsonify, request
+from flask_jwt_extended import (create_access_token, get_jwt_identity,
+                                jwt_required)
 
+from app.configs.auth import auth
 from app.configs.database import db
 from app.models.user_model import UserModel
-from app.configs.auth import auth
 
 
 def register_user():
     data = request.get_json()
-    data["api_key"] = token_urlsafe(16)
 
     user = UserModel(**data)
 
@@ -29,15 +28,15 @@ def login_user():
     if not user.check_password(data["password"]):
         return {"error": "email and password missmatch"}, 401
     
-    token = user.api_key
+    token = create_access_token(user)
 
-    return {"api_key": token}, 200
+    return {"token": token}, 200
 
-@auth.login_required
+@jwt_required()
 def get_user():
-    return jsonify(auth.current_user()), 200
+    return jsonify(get_jwt_identity()), 200
 
-@auth.login_required
+@jwt_required()
 def update_user():
     data = request.get_json()
 
@@ -51,9 +50,9 @@ def update_user():
 
     return jsonify(user), 200
 
-@auth.login_required
+@jwt_required()
 def delete_user():
-    email_to_del = auth.current_user().email
+    email_to_del = get_jwt_identity()['email']
 
     user: UserModel = UserModel.query.filter_by(email=email_to_del).first()
 

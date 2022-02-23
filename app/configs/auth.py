@@ -1,6 +1,8 @@
-from flask_httpauth import HTTPTokenAuth
-from app.models.user_model import UserModel
 import os
+
+from flask_httpauth import HTTPTokenAuth
+
+from app.models.user_model import UserModel
 
 auth = HTTPTokenAuth(scheme='Bearer')
 
